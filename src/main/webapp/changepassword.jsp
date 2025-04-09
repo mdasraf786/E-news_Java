@@ -432,63 +432,15 @@ margin-bottom:300px;
 				<div class="col-lg-8 offset-lg-2 text-center">
 					<div class="breadcrumb-text">
 						
-						<h1>Your Personal Details</h1>
+						<h1>Change Your Password</h1>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 	<!-- end breadcrumb section -->
-     <div class="container  "id="profilesec">
-                <div class="row">
-                    <!-- Left Column - Profile Section -->
-                    
-                    <div class="col-md-3 ">
-                        <div class="profile-section ">
-                            <!-- User Icon with Background Gradient -->
-                            <div class="img">
-    <img src="<%= session.getAttribute("profile_image") %>" class="rounded-circle" style="width: 110px; height: 110px;" alt="User Image">
-    <form action="" method="post" enctype="multipart/form-data" >
-        <div class="middle-profilepic text-center  d-none ">
-            <input type="file" class="form-control" id="image" name="image" onchange="submitForm()">
-        </div>
-    </form>
-</div>
-
-                            
-                            <!-- Username -->
-                            <div class="username">
-                
-                                <p><%= session.getAttribute("fname") %>  <%= session.getAttribute("mname") %>  <%= session.getAttribute("lname") %></p>
-                            
-                            </div>
-                            
-                            <!-- Profile with Icon -->
-                            <div class="profile">
-                                <a href="#p1" class="text-dark text-decoration-none"><i class="fas fa-user"></i> Profile</a>
-                            </div>
-                            <!-- Profile with Icon -->
-                            <div class="profile">
-                                <a href="useraddednews.jsp" class="text-dark text-decoration-none"><i class="fas fa-newspaper"></i> News</a>
-                            </div>
-                            <!-- Login Details -->
-                            <div class="login-details">
-                                <a href="#p2" class="text-dark text-decoration-none"><i class="fas fa-sign-in-alt"></i> Login Details</a>
-                            </div>
-                            
-                            <!-- Logout -->
-                            <div class="logout">
-                                <a href="index.php" class="text-dark text-decoration-none"><i class="fas fa-sign-out-alt"></i> Logout</a>
-                            </div>
-                        </div>
-                    </div>
-                    
-                  <!-- Right Column - Form Section -->
-              
-<div class="col-md-9" id="p1">
-    <div class="profile-section">
-        <div class="row">
-            <%
+ <div class="container mt-5 mb-5" >
+<%
 String message = request.getParameter("message");
 if (message != null) { 
 %>
@@ -498,145 +450,45 @@ if (message != null) {
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 <% } %>
-            <!-- Profile Heading -->
-            <div class="col-md-2">
-                <h2>Profile</h2>
-            </div>
-            <!-- Button -->
-            <div class="col-auto ml-auto">
-                 <button class="btn-orange">
-	                                <a href="EditUserServlet?id=<%= session.getAttribute("user_id") %>" class="btn-orange">Edit</a>
-	                            </button>
-            </div>
-        </div>
-
-        <!-- Profile Details -->
-        <div class="row align-items-center">
-            <div class="col">
-                <div class="form-group row">
-                    <label for="name" class="col-sm-2 col-form-label">Name:</label>
-                    <div class="col-sm-10">
-                        <input type="text" class="form-control" id="name" value="<%= session.getAttribute("fname") %> <%= session.getAttribute("mname") %> <%= session.getAttribute("lname") %>" disabled>
+        <div class="row justify-content-center">
+            <div class="col-md-4">
+                <div class="card mt-5">
+                    <div class="card-header travel-header"> <!-- Apply travel-header class -->
+                        <h4>E-news</h4>
                     </div>
-                </div>
-                <div class="form-group row">
-                    <label for="birthday" class="col-sm-2 col-form-label">Birthday:</label>
-                    <div class="col-sm-10">
-                        <input type="text" class="form-control" id="birthday" value="<%= session.getAttribute("dob") %>" disabled>
+                    <div class="card-header login-header"> <!-- Apply login-header class -->
+                        <h4>Change Your Password</h4>
                     </div>
-                </div>
-                <div class="form-group row">
-                    <label for="address" class="col-sm-2 col-form-label">Address:</label>
-                    <div class="col-sm-10">
-                        <input type="text" class="form-control" id="address" value="<%= session.getAttribute("address") %>" disabled>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="email" class="col-sm-2 col-form-label">Email:</label>
-                    <div class="col-sm-10">
-                        <input type="text" class="form-control" id="email" value="<%= session.getAttribute("userEmail") %>" disabled>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="state" class="col-sm-2 col-form-label">Gender:</label>
-                    <div class="col-sm-10">
-                        <input type="text" class="form-control" id="state" value="<%= session.getAttribute("gender") %>" disabled>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-       
-    </div>
-</div>
-            
-                    </div>
-                </div>
-            </div>
-            <div class="container mt-5">
-                <div class="row">
-                    <!-- Left Column - Profile Section -->
-                    <div class="col-md-3">
-                    
-                    
-                        </div>
-                
-                    
-                    <!-- Right Column - Form Section -->
-                    <div class="col-md-9" id="p2">
-                        <div class="profile-section s">
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <h2>Login Details</h2>
-                                </div>
-                            </div>
-                        
-                            
-                        
-                            
-                        <!-- Login Details Form -->
-                    <div class="form-group row">
-        <label for="mobile" class="col-sm-2 col-form-label">Number:</label>
-        <div class="col-sm-8">
-            <div class="input-group">
-                <input type="text" class="form-control" style="width:500px;" id="mobile" value="<%= session.getAttribute("contact") %>" disabled>
-                <div class="input-group-append">
-                    <!-- <a href="#" class="btn text-primary">Change Number?</a> -->
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-2"></div>
-    </div>
-    <div class="form-group row">
-        <label for="email" class="col-sm-2 col-form-label">Email:</label>
-        <div class="col-sm-8">
-            <div class="input-group">
-                <input type="email" class="form-control" style="width:500px;" id="email" value="<%= session.getAttribute("userEmail") %>" disabled>
-                <div class="input-group-append">
-                    <!-- <a href="#" class="btn text-primary">Change Email?</a> -->
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-2"></div>
-    </div>
-    <div class="form-group row">
-        <label for="password" class="col-sm-2 col-form-label">Password:</label>
-        <div class="col-sm-8">
-            <div class="input-group">
-                <input type="password" class="form-control" style="width:500px;"id="password" value="<%= session.getAttribute("password") %>" disabled >
-                <div class="input-group-append">
-                    <a href="changepassword.jsp" class="btn text-primary">Change Password?</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-2"></div>
-    </div>
-
-
-
-                            
-                            <!-- Buttons -->
-                        
-                                
-                                
-                            
+                    <div class="card-body">
+                        <form  id="loginform" action="updatepassword.jsp" method="post">
+                            <div class="form-group">
+                                <label for="email">Email:</label>
+                                <input type="email" class="form-control" id="email" name="email" style="background-color: transparent;">
+                               
                             </div>
                             
-                            
-                        </div>
+                            <div class="form-group">
+                                <label for="password">New Password:</label>
+                                <input type="password" class="form-control" id="password" name="Password" style="background-color: transparent;">
+                                
+                            </div>
+                           
+                            <button type="submit" name="submit" id="submit" class="btn btn-block loginbtn">Update Password</button>
+                        </form>
                     </div>
                 </div>
-                <?php
-    }
-    ?>
+            </div>
+        </div>
+    </div>
     
-<!-- footer -->
+	
+	<!-- footer -->
 	<div class="footer-area">
 		<div class="container">
 			<div class="row">
 				<div class="col-lg-3 col-md-6">
 					<div class="footer-box about-widget">
-						<h2 class="widget-title">About us</h2>
+						<h2 class="widget-title">Login</h2>
 						<p>Ut enim ad minim veniam perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae.</p>
 					</div>
 				</div>
@@ -655,10 +507,10 @@ if (message != null) {
 						<h2 class="widget-title">Pages</h2>
 						<ul>
 							<li><a href="index.jsp">Home</a></li>
-							<li><a href="about.jsp">About</a></li>
-							<li><a href="services.jsp">Shop</a></li>
-							<li><a href="news.jsp">News</a></li>
-							<li><a href="contact.jsp">Contact</a></li>
+							<li><a href="about.html">About</a></li>
+							<li><a href="services.html">Shop</a></li>
+							<li><a href="news.html">News</a></li>
+							<li><a href="contact.html">Contact</a></li>
 						</ul>
 					</div>
 				</div>
@@ -666,7 +518,7 @@ if (message != null) {
 					<div class="footer-box subscribe">
 						<h2 class="widget-title">Subscribe</h2>
 						<p>Subscribe to our mailing list to get the latest updates.</p>
-						<form action="index.jsp">
+						<form action="index.html">
 							<input type="email" placeholder="Email">
 							<button type="submit"><i class="fas fa-paper-plane"></i></button>
 						</form>
@@ -676,10 +528,25 @@ if (message != null) {
 		</div>
 	</div>
 	<!-- end footer -->
+	<script>
+document.getElementById("loginform").addEventListener("submit", function(event) {
+    let email = document.getElementById("email").value.trim();
+    let password = document.getElementById("password").value.trim();
+    
+    if (email === "" || password === "") {
+        alert("Email and Password are required!");
+        event.preventDefault(); // Prevent form submission
+    } else if (!email.includes("@") || !email.includes(".")) {
+        alert("Enter a valid email address!");
+        event.preventDefault();
+    } else if (password.length < 6) {
+        alert("Password must be at least 6 characters long!");
+        event.preventDefault();
+    }
+});
+</script>
 	
 
-
-	</script>
 	<!-- jquery -->
 	<script src="assets/js/jquery-1.11.3.min.js"></script>
 	<!-- bootstrap -->
@@ -698,45 +565,8 @@ if (message != null) {
 	<script src="assets/js/jquery.meanmenu.min.js"></script>
 	<!-- sticker js -->
 	<script src="assets/js/sticker.js"></script>
-	<!-- form validation js -->
-	<script src="assets/js/form-validate.js"></script>
 	<!-- main js -->
 	<script src="assets/js/main.js"></script>
-	
-<script>
-    $(document).ready(function() {
-        // Toggle edit form when the edit button is clicked
-        $('.edit-profile.btn-toggle').click(function() {
-            $('.edit-form').toggle(); // Toggle the visibility of the edit form
-        });
-    });
 
-    function submitForm() {
-        document.querySelector('form').submit();
-    }
-
-    document.addEventListener("DOMContentLoaded", function() {
-        var navLinks = document.querySelectorAll("a.nav-link");
-
-        navLinks.forEach(function(link) {
-            link.addEventListener("click", function(event) {
-                // Remove any existing "active" class from all links
-                navLinks.forEach(function(item) {
-                    item.classList.remove("active");
-                });
-
-                // Add "active" class to the clicked link
-                this.classList.add("active");
-
-                // Navigate to the link's href after adding the "active" class
-                window.location.href = this.getAttribute("href");
-
-                // Prevent default link behavior (e.g., navigating to the href)
-                // event.preventDefault();
-            });
-        });
-    });
-</script>
-	
 </body>
 </html>

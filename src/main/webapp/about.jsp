@@ -109,7 +109,7 @@
 					<div class="main-menu-wrap">
 						<!-- logo -->
 						<div class="site-logo">
-							<a href="index_2.jsp">
+							<a href="index.jsp">
 								<h5 class="text-light">
 									<span class="text-orange">E</span>-News
 								</h5>
@@ -120,7 +120,7 @@
 						<!-- menu start -->
 						<nav class="main-menu">
 							<ul>
-								<li class="current-list-item"><a href="index_2.jsp">Home</a></li>
+								<li class="current-list-item"><a href="index.jsp">Home</a></li>
 								<li><a href="about.jsp">About</a></li>
 
 							<li class="profile-menu">
@@ -393,84 +393,94 @@
 	</div>
 	<!-- end team section -->
 
-	<!-- testimonial-section -->
-	<div class="testimonail-section mt-150 mb-150">
-		<div class="container">
-			<!-- Heading -->
-			<div class="row">
-				<div class="col-lg-12 text-center">
-					<h2 class="section-title">
-						User <span class="orange-text">Reviews</span> Around the World
-					</h2>
-					<p class="section-subtitle">Hear what our customers have to say
-						about their experiences.</p>
-				</div>
-			</div>
-			  <div class="row mt-4">
-                <div class="col-lg-10 offset-lg-1 text-center">
-                    <div class="testimonial-sliders">
-                        <%
-                        // Database connection details
-                        String urll = "jdbc:mysql://localhost:3306/enews";
-                        String userr = "root";
-                        String pass = "";
-
-                       
-
-                        try {
-                            // Load the MySQL JDBC driver
-                            Class.forName("com.mysql.cj.jdbc.Driver");
-
-                            // Connect to the database
-                            Connection conn = DriverManager.getConnection(urll, userr, pass);
-
-                            // Fetch all reviews from the database
-                            String sql = "SELECT name, profession, review, pic FROM review";
-                            PreparedStatement stmt = conn.prepareStatement(sql);
-                            ResultSet rs = stmt.executeQuery();
-
-                            // Loop through the result set and add reviews to the list
-                            while (rs.next()) {
+	  <!-- Testimonial Sliders -->
+        <div class="row mt-4">
+            <div class="col-lg-10 offset-lg-1 text-center">
+                <div class="testimonial-sliders">
+                    <%
+                    // Database connection parameters
+                    String urll = "jdbc:mysql://localhost:3306/enews";
+                    String userr = "root";
+                    String pass = "";
+                    boolean hasReviews = false;
+                    
+                    try {
+                        // Load JDBC driver
+                        Class.forName("com.mysql.cj.jdbc.Driver");
+                        
+                        // Create connection
+                        Connection conn = DriverManager.getConnection(urll, userr, pass);
+                        
+                        // SQL query to fetch reviews
+                        String sql = "SELECT name, profession, review, pic FROM review ORDER BY id DESC";
+                        PreparedStatement stmt = conn.prepareStatement(sql);
+                        ResultSet rs = stmt.executeQuery();
+                        
+                        // Process results
+                        while (rs.next()) {
+                            hasReviews = true;
+                            String clientName = rs.getString("name");
+                            String clientProfession = rs.getString("profession");
+                            String clientReview = rs.getString("review");
+                            String clientImage = rs.getString("pic");
                             
-                            	String name = rs.getString("name");
-                                String profession = rs.getString("profession");
-                                String review = rs.getString("review");
-                                String image = rs.getString("pic"); // Assuming 'videos' column stores image paths
-                              
-                           
-                      
-                        %>
-                                <div class="single-testimonial-slider">
-                                    <div class="client-avater">
-                                        <img src="<%= image %>" alt="" class="news-image">
-                                    </div>
-                                    <div class="client-meta">
-                                        <h3>
-                                            <%=profession %> <span><%= profession %></span>
-                                        </h3>
-                                        <p class="testimonial-body orange-text">"<%= review%>"</p>
-                                        <div class="last-icon">
-                                            <i class="fas fa-quote-right"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                        <%
+                            // Set default image if none provided
+                            if (clientImage == null || clientImage.isEmpty()) {
+                                clientImage = "assets/img/team/team-1.jpg";
                             }
-
-                            // Close the database connection
-                            conn.close();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-
-                        %>
+                    %>
+                    <div class="single-testimonial-slider">
+                        <div class="client-avater">
+                            <img src="<%= clientImage %>" alt="<%= clientName %>">
+                        </div>
+                        <div class="client-meta">
+                            <h3>
+                                <%= clientName %> <span><%= clientProfession != null ? clientProfession : "Customer" %></span>
+                            </h3>
+                            <p class="testimonial-body orange-text">"<%= clientReview %>"</p>
+                            <div class="last-icon">
+                                <i class="fas fa-quote-right"></i>
+                            </div>
+                        </div>
                     </div>
+                    <%
+                        }
+                        
+                        // Close resources
+                        rs.close();
+                        stmt.close();
+                        conn.close();
+                        
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        // You might want to add error handling here
+                    }
+                    
+                    // Show message if no reviews found
+                    if (!hasReviews) {
+                    %>
+                    <div class="single-testimonial-slider">
+                        <div class="client-avater">
+                            <img src="assets/img/team/team-1.jpg" alt="No reviews">
+                        </div>
+                        <div class="client-meta">
+                            <h3>No Reviews Yet <span>Be the first to review!</span></h3>
+                            <p class="testimonial-body orange-text">"We would love to hear your feedback about our services."</p>
+                            <div class="last-icon">
+                                <i class="fas fa-quote-right"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <%
+                    }
+                    %>
                 </div>
             </div>
         </div>
     </div>
-    <!-- End Testimonial Section -->
-	<!-- end testimonial-section -->
+</div>
+<!-- end testimonial-section -->
+
 
 	<!-- media partners carousel -->
 	<div class="media-partners-carousel">
@@ -551,7 +561,24 @@
 	<!-- end footer -->
 
 
-
+<!-- jQuery and Owl Carousel JS -->
+<script src="assets/js/jquery-1.11.3.min.js"></script>
+<script src="assets/js/owl.carousel.min.js"></script>
+<script>
+//2. TESTIMONIAL SLIDER
+$(".testimonial-slider").owlCarousel({
+    loop: true,
+    margin: 30,
+    nav: false,
+    dots: true,
+    autoplay: true,
+    responsive: {
+        0: { items: 1 },
+        600: { items: 2 },
+        1000: { items: 3 }
+    }
+});
+</script>
 
 	<!-- jquery -->
 	<script src="assets/js/jquery-1.11.3.min.js"></script>

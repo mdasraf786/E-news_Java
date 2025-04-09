@@ -1,5 +1,12 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%
-    session.invalidate(); // Destroy the session
-    response.sendRedirect("index_2.jsp"); // Redirect to login page
+    session.invalidate();
+//Remove cookies
+Cookie[] cookies = request.getCookies();
+if (cookies != null) {
+    for (Cookie cookie : cookies) {
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
+    }
+}
+    response.sendRedirect("login.jsp");
 %>

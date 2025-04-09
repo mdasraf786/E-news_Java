@@ -348,7 +348,7 @@ if (session.getAttribute("admin") == null) {
                                 <td class="text-center"><%= rs.getString("like_count") %></td>
                                 <td class="text-center"><img style="width:100px;height:100px;" src="<%= rs.getString("videos") %>"></td>
                                 <td class="text-center">
-                                    <a href="EditNewsServlet?id=<%= rs.getInt("id") %>" class="btn-orange">Edit</a>
+                                    <a href="EditNewsServlet?id=<%= rs.getInt("id") %>" class="btn-orange  mt-2">Edit</a>
                                 </td>
                                 <td class="text-center">
                                     <a href="DeleteNewsServlet?id=<%= rs.getInt("id") %>" class="bg-danger">Delete</a>

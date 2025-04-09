@@ -248,7 +248,7 @@
 							<li class="current-list-item"><a href="#">Home</a>
 								<ul class="sub-menu">
 									<li><a href="index.jsp">Static Home</a></li>
-									<li><a href="index_2.jsp">Slider Home</a></li>
+									<li><a href="index.jsp">Slider Home</a></li>
 								</ul></li>
 							<li><a href="news.jsp">News</a>
 								<ul class="sub-menu">

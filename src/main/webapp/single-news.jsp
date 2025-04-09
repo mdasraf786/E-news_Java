@@ -209,7 +209,7 @@ inline-block
 		<!-- menu start -->
 						<nav class="main-menu">
 							<ul>
-								<li class="current-list-item"><a href="index_2.jsp">Home</a></li>
+								<li class="current-list-item"><a href="index.jsp">Home</a></li>
 								<li><a href="about.jsp">About</a></li>
 
 							<li class="profile-menu">

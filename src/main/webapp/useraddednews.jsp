@@ -28,6 +28,9 @@ if (session.getAttribute("user_id") == null) {
 <link
 	href="https://fonts.googleapis.com/css?family=Poppins:400,700&display=swap"
 	rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Poppins:400,700&display=swap" rel="stylesheet">
+					<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <!-- fontawesome -->
 <link rel="stylesheet" href="assets/css/all.min.css">
 <!-- bootstrap -->
@@ -273,7 +276,7 @@ if (session.getAttribute("user_id") == null) {
 							<!-- menu start -->
 							<nav class="main-menu">
 								<ul>
-									<li class="current-list-item"><a href="index_2.jsp">Home</a>
+									<li class="current-list-item"><a href="index.jsp">Home</a>
 										
 									</li>
 									<li><a href="about.jsp">About</a></li>
@@ -303,7 +306,7 @@ if (session.getAttribute("user_id") == null) {
                 <li><a href="registrationform.jsp">Register</a></li>
             <% } else { %>
                 <li><a href="profile.jsp">Profile</a></li>
-                 <li><a href="useraddednews.jsp">Added News</a></li>
+                
                 
                 <li><a href="logout.jsp">Logout</a></li>
             <% } %>
@@ -349,7 +352,7 @@ if (session.getAttribute("user_id") == null) {
     <% } %>
 
     <div class="table-container mt-0">
-        <h1 class="text-center text-orange mb-4">News Added by Admin</h1>
+        <h1 class="text-center text-orange mb-4">News Added by Me</h1>
 
         <div class="order-list">
             <table class="table table-striped">
@@ -362,6 +365,8 @@ if (session.getAttribute("user_id") == null) {
                         <th scope="col" class="text-orange text-center">Category</th>
                         <th scope="col" class="text-orange text-center">Date</th>
                         <th scope="col" class="text-orange text-center">Like Count</th>
+                                                <th scope="col" class="text-orange text-center">Email</th>
+                        
                         <th scope="col" class="text-orange text-center">Image</th>
                         <th scope="col" class="text-orange text-center">Edit</th>
                         <th scope="col" class="text-orange text-center">Delete</th>
@@ -380,14 +385,14 @@ if (session.getAttribute("user_id") == null) {
     
     try {
         // Get the current logged-in user's email from session
-        String user = (String) session.getAttribute("id");
+        String user = (String) session.getAttribute("user");
         
         // Check if user is logged in (email exists in session)
         if (userEmail == null || userEmail.isEmpty()) {
             out.println("<tr><td colspan='10' class='text-center text-danger'>Please login to view your news</td></tr>");
         } else {
             con = DriverManager.getConnection(url, dbUser, dbPassword);
-            String sql = "SELECT * FROM news WHERE id = ?";
+            String sql = "SELECT * FROM news WHERE email = ?";
             pstmt = con.prepareStatement(sql);
             pstmt.setString(1, user); // Use the logged-in user's email
             rs = pstmt.executeQuery();
@@ -406,12 +411,14 @@ if (session.getAttribute("user_id") == null) {
                         <td class="text-center"><%= rs.getString("category") %></td>
                         <td class="text-center"><%= rs.getString("date") %></td>
                         <td class="text-center"><%= rs.getString("like_count") %></td>
+                                                <td class="text-center"><%= rs.getString("email") %></td>
+                        
                         <td class="text-center"><img style="width:100px;height:100px;" src="<%= rs.getString("videos") %>"></td>
                         <td class="text-center">
-                            <a href="EditNewsServlet?id=<%= rs.getInt("id") %>" class="btn-orange">Edit</a>
+                            <a href="EditUserNewsServlet?id=<%= rs.getInt("id") %>" class="btn-orange">Edit</a>
                         </td>
                         <td class="text-center">
-                            <a href="DeleteNewsServlet?id=<%= rs.getInt("id") %>" class="bg-danger">Delete</a>
+                            <a href="delete.jsp?id=<%= rs.getInt("id") %>" class="bg-danger">Delete</a>
                         </td>
                     </tr>
     <%

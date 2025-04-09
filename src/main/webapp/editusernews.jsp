@@ -1,12 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
      <%@ page import="java.sql.*" %>
-    <%  // Check if the admin session exists
-    if (session.getAttribute("admin") == null) {
-        // Redirect to login page if the admin is not logged in
-        response.sendRedirect("login.jsp?message=Please login as admin to access this page.");
-        return;
-    } %>
+   
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -138,7 +133,11 @@ th, td {
     padding: 10px;
 }
 
-
+td img {
+    max-width: 80px;
+    height: auto;
+    border-radius: 5px;
+}
 
 td button {
     border: none;
@@ -187,6 +186,10 @@ td button {
         font-size: 14px;
     }
 
+    td img {
+        max-width: 60px;
+    }
+
     td button {
         font-size: 12px;
         padding: 6px 10px;
@@ -220,47 +223,72 @@ td button {
 	    <!--PreLoader Ends-->
 		
 	<!-- header -->
-	<div class="top-header-area" id="sticker">
-		<div class="container">
-			<div class="row">
-				<div class="col-lg-12 col-sm-12 text-center">
-					<div class="main-menu-wrap">
-						<!-- logo -->
-						<div class="site-logo">
-							<a href="index.jsp">
-								<h5 class="text-light">
-									<span class="text-orange">E</span>-News
-								</h5>
-							</a>
+		<div class="top-header-area" id="sticker">
+			<div class="container">
+				<div class="row">
+					<div class="col-lg-12 col-sm-12 text-center">
+						<div class="main-menu-wrap">
+							<!-- logo -->
+							<div class="site-logo">
+								<a href="index.jsp">
+							<h5 class="text-light"><span class="text-orange">E</span>-News</h5>
+								</a>
+							</div>
+							<!-- logo -->
+	
+							<!-- menu start -->
+							<nav class="main-menu">
+								<ul>
+									<li class="current-list-item"><a href="index.jsp">Home</a>
+										
+									</li>
+									<li><a href="about.jsp">About</a></li>
+								
+									<li><a href="news.jsp">News</a>
+										
+									</li>
+									<li><a href="contact.jsp">Contact</a></li>
+						<li class="profile-menu">
+    <div class="header-icons">
+        <%
+        String userEmail = (String) session.getAttribute("user");
+        String profileImage = (String) session.getAttribute("profile_image");
+
+        if (userEmail != null && profileImage != null && !profileImage.isEmpty()) { 
+        %>
+            <a class="shopping-cart" href="#">
+                <img src="<%= profileImage %>" alt="Profile" style="width: 40px; height: 40px; border-radius: 50%;">
+            </a>
+        <% } else { %>
+            <a class="shopping-cart" href="#"><i class="fas fa-user"></i></a>
+        <% } %>
+
+        <ul class="sub-menu">
+            <% if (userEmail == null) { %>
+                <li><a href="login.jsp">Login</a></li>
+                <li><a href="registrationform.jsp">Register</a></li>
+            <% } else { %>
+                <li><a href="profile.jsp">Profile</a></li>
+                
+                
+                <li><a href="logout.jsp">Logout</a></li>
+            <% } %>
+            <li><a href="adminindex.jsp">Admin</a></li>
+        </ul>
+    </div>
+</li>
+			</ul>
+							</nav>
+							<a class="mobile-show search-bar-icon" href="#"><i class="fas fa-profile"></i></a>
+							<div class="mobile-menu"></div>
+							<!-- menu end -->
 						</div>
-						<!-- logo -->
-
-						<!-- menu start -->
-						  <nav class="main-menu">
-                            <ul>
-                                <li class="current-list-item"><a href="adminindex.jsp">Dashboard</a></li>
-                                <li><a href="addednews.jsp">News</a></li>
-                                <li><a href="checkuser.jsp">Users</a></li>
-                                <li><a href="contactmessages.jsp">Contact</a></li>
-
-                                <!-- Logout Option -->
-                                <li class="profile-menu">
-                                    <div class="header-icons">
-                                        <a class="shopping-cart" href="logout.jsp"><i class="fas fa-sign-out-alt"></i> Logout</a>
-                                    </div>
-                                </li>
-                            </ul>
-                        </nav>
-						<a class="mobile-show search-bar-icon" href="#"><i
-							class="fas fa-profile"></i></a>
-						<div class="mobile-menu"></div>
-						<!-- menu end -->
 					</div>
 				</div>
 			</div>
 		</div>
-	</div>
-	<!-- end header -->
+		<!-- end header -->
+	
 
 	
 	<!-- breadcrumb-section -->
@@ -280,7 +308,7 @@ td button {
 	<!-- end breadcrumb section -->
     <div class="container mt-5">
         <h1 class="text-center text-orange mb-4">Edit News</h1>
-        <form action="UpdateNewsServlet" method="post" enctype="multipart/form-data">
+        <form action="UpdateUserNewsServlet" method="post" enctype="multipart/form-data">
             <input type="hidden" name="id" value="<%= request.getAttribute("id") %>">
             <div class="mb-3">
                 <label for="title" class="form-label">Title</label>
@@ -309,7 +337,7 @@ td button {
                 <% if (currentImage != null && !currentImage.isEmpty()) { %>
                     <img src="<%= currentImage %>" class="preview-image d-block" id="currentImagePreview">
                 <% } else { %>
-                    <p>No image currently set</p>	
+                    <p>No image currently set</p>
                 <% } %>
             </div>
             <div class="mb-3">
@@ -318,8 +346,7 @@ td button {
                 <img src="#" class="preview-image d-none" id="imagePreview">
             </div>
             <button type="submit" class="btn btn-primary mb-5">Update News</button>
-                    <a href="adminindex.jsp" class="btn btn-primary mb-5">Cancel</a>
-
+            <a href="profile.jsp" class="btn btn-primary mb-5">Cancel</a>
             
         </form>
     </div>

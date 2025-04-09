@@ -311,6 +311,8 @@
 	                    <th scope="col" class="text-orange text-center">category</th>
 	                    <th scope="col" class="text-orange text-center">Date</th>
 	                    <th scope="col" class="text-orange text-center">Like Count</th>
+	                    	                    <th scope="col" class="text-orange text-center">Email</th>
+	                    
 	                             <th scope="col" class="text-orange text-center">Image</th>
 	                                 <th scope="col" class="text-orange text-center">Edit</th>
 	                                 <th scope="col" class="text-orange text-center">Delete</th>
@@ -338,6 +340,7 @@
 	                        <td class="text-center"><%= rs.getString("category") %></td>
 	                        <td class="text-center"><%= rs.getString("date") %></td>
 	                        <td class="text-center"><%= rs.getString("like_count") %></td>
+	                      	                        <td class="text-center"><%= rs.getString("email") %></td>
 	                      
 	                        <td class="text-center"><img style="width:100px;height:100px;" src="<%= rs.getString("videos") %>"></td>
 	                        <td class="text-center">

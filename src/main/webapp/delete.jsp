@@ -40,7 +40,7 @@
 
             if (rowsDeleted > 0) {
                 // If deletion is successful, redirect to the main page
-                response.sendRedirect("availablenews.jsp"); // Replace with your main page URL
+                response.sendRedirect("useraddednews.jsp"); // Replace with your main page URL
             } else {
                 // If no rows were deleted, display an error message
                 out.println("<p>No user found with the specified ID.</p>");

@@ -19,11 +19,11 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-@WebServlet("/UpdateNewsServlet")
+@WebServlet("/UpdateUserServlet")
 @MultipartConfig(fileSizeThreshold = 1024 * 1024 * 2, // 2MB
                  maxFileSize = 1024 * 1024 * 10,      // 10MB
                  maxRequestSize = 1024 * 1024 * 50)   // 50MB
-public class UpdateNewsServlet extends HttpServlet {
+public class UpdateUserServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     
     // Directory where uploaded files will be saved
@@ -31,18 +31,21 @@ public class UpdateNewsServlet extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
-        if (session.getAttribute("admin") == null) {
-            response.sendRedirect("login.jsp?message=Please login as admin to access this page.");
+        if (session.getAttribute("user") == null) {
+            response.sendRedirect("login.jsp?message=Please login  to access this page.");
             return;
         }
 
         String id = request.getParameter("id");
-        String title = request.getParameter("title");
-        String name = request.getParameter("name");
-        String content = request.getParameter("content");
-        String category = request.getParameter("category");
-        String date = request.getParameter("date");
-        String likeCount = request.getParameter("like_count");
+        String fname = request.getParameter("fname");
+        String mname = request.getParameter("mname");
+
+        String lname = request.getParameter("lname");
+
+        String dob = request.getParameter("dob");
+        String gender = request.getParameter("gender");
+        String address = request.getParameter("address");
+     
         
         // Get the current image path from the database
         String currentImagePath = getCurrentImagePath(id);
@@ -88,25 +91,25 @@ public class UpdateNewsServlet extends HttpServlet {
             Class.forName("com.mysql.cj.jdbc.Driver");
             Connection con = DriverManager.getConnection(url, user, password);
 
-            String query = "UPDATE news SET Title = ?, name = ?, content = ?, category = ?, date = ?, like_count = ?, videos = ? WHERE id = ?";
+            String query = "UPDATE registrationform SET fname = ?, mname = ?, lname = ?, dob = ?, gender = ?, address = ?, image = ? WHERE id = ?";
             PreparedStatement pstmt = con.prepareStatement(query);
-            pstmt.setString(1, title);
-            pstmt.setString(2, name);
-            pstmt.setString(3, content);
-            pstmt.setString(4, category);
-            pstmt.setString(5, date);
-            pstmt.setInt(6, Integer.parseInt(likeCount));
+            pstmt.setString(1, fname);
+            pstmt.setString(2, mname);
+            pstmt.setString(3, lname);
+            pstmt.setString(4, dob);
+            pstmt.setString(5, gender);
+            pstmt.setString(6, address);
             pstmt.setString(7, imagePath);
             pstmt.setInt(8, Integer.parseInt(id));
             pstmt.executeUpdate();
 
-            response.sendRedirect("availablenews.jsp?message=News updated successfully.");
+            response.sendRedirect("profile.jsp?message=News updated successfully.");
 
             pstmt.close();
             con.close();
         } catch (Exception e) {
             e.printStackTrace();
-            response.sendRedirect("availablenews.jsp?message=Error updating news.");
+            response.sendRedirect("profile.jsp?message=Error updating news.");
         }
     }
     
@@ -120,13 +123,13 @@ public class UpdateNewsServlet extends HttpServlet {
             Class.forName("com.mysql.cj.jdbc.Driver");
             Connection con = DriverManager.getConnection(url, user, password);
 
-            String query = "SELECT videos FROM news WHERE id = ?";
+            String query = "SELECT image FROM registrationform WHERE id = ?";
             PreparedStatement pstmt = con.prepareStatement(query);
             pstmt.setInt(1, Integer.parseInt(id));
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
-                currentImagePath = rs.getString("videos");
+                currentImagePath = rs.getString("image");
             }
 
             rs.close();

@@ -41,13 +41,13 @@ public class DeleteNewsServlet extends HttpServlet {
             pstmt.setInt(1, Integer.parseInt(id));
             pstmt.executeUpdate();
 
-            response.sendRedirect("addednews.jsp?message=News deleted successfully.");
+            response.sendRedirect("availabenews.jsp?message=News deleted successfully.");
 
             pstmt.close();
             con.close();
         } catch (Exception e) {
             e.printStackTrace();
-            response.sendRedirect("addednews.jsp?message=Error deleting news.");
+            response.sendRedirect("availabenews.jsp?message=Error deleting news.");
         }
     }
 }

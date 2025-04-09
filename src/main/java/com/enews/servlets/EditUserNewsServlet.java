@@ -12,20 +12,17 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-@WebServlet("/EditNewsServlet")
-public class EditNewsServlet extends HttpServlet {
+@WebServlet("/EditUserNewsServlet")
+public class EditUserNewsServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        HttpSession session = request.getSession();
-        if (session.getAttribute("admin") == null) {
-            response.sendRedirect("login.jsp?message=Please login as admin to access this page.");
-            return;
-        }
+       
+    
 
         String id = request.getParameter("id");
         if (id == null || id.isEmpty()) {
-            response.sendRedirect("availablenews.jsp?message=Invalid news ID.");
+            response.sendRedirect("useraddednews.jsp?message=Invalid news ID.");
             return;
         }
 
@@ -52,9 +49,9 @@ public class EditNewsServlet extends HttpServlet {
                 request.setAttribute("like_count", rs.getString("like_count"));
                 request.setAttribute("image", rs.getString("videos"));
 
-                request.getRequestDispatcher("editnews.jsp").forward(request, response);
+                request.getRequestDispatcher("editusernews.jsp").forward(request, response);
             } else {
-                response.sendRedirect("availablenews.jsp?message=News not found.");
+                response.sendRedirect("useraddednews.jsp?message=News not found.");
             }
 
             rs.close();
@@ -62,7 +59,7 @@ public class EditNewsServlet extends HttpServlet {
             con.close();
         } catch (Exception e) {
             e.printStackTrace();
-            response.sendRedirect("availablenews.jsp?message=Error fetching news details.");
+            response.sendRedirect("useraddednews.jsp?message=Error fetching news details.");
         }
     }
 }

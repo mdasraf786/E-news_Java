@@ -49,7 +49,14 @@
 </head>
 <body>
 	<style>
-
+.excerpt {
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* Limit to 3 lines */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal;
+}
     .liked i {
     color: orange;
 }
@@ -198,7 +205,7 @@ inline-block
 						<!-- menu start -->
 						<nav class="main-menu">
 							<ul>
-								<li class="current-list-item"><a href="index_2.jsp">Home</a></li>
+								<li class="current-list-item"><a href="index.jsp">Home</a></li>
 								<li><a href="about.jsp">About</a></li>
 
 							<li class="profile-menu">
@@ -305,49 +312,67 @@ inline-block
 	</div>
 	<!-- end breadcrumb section -->
 
-		
 	<%
-	 // Database connection details
     String urlll = "jdbc:mysql://localhost:3306/enews";
     String userrr = "root";
     String passworddd = "";
 
-    // Retrieve user ID from session
     String userId = (String) session.getAttribute("user_id");
 
-    // Retrieve category filter from request
     String categoryFilter = request.getParameter("category");
+    String searchText = request.getParameter("searchText");
+    String searchDate = request.getParameter("searchDate");
+    String searchYear = request.getParameter("searchYear");
 
-    // Base query to fetch news items with like and comment counts
+    boolean hasSearchText = searchText != null && !searchText.trim().isEmpty();
+    boolean hasSearchDate = searchDate != null && !searchDate.trim().isEmpty();
+    boolean hasSearchYear = searchYear != null && !searchYear.trim().isEmpty();
+
     String queryy = "SELECT news.*, " +
                     "  (SELECT COUNT(*) FROM likes WHERE news_id = news.id) AS like_count, " +
                     "  (SELECT COUNT(*) FROM comments WHERE news_id = news.id) AS comment_count, " +
                     "  EXISTS (SELECT 1 FROM likes WHERE user_id = ? AND news_id = news.id) AS liked " +
-                    "FROM news";
+                    "FROM news WHERE 1=1";
 
     if (categoryFilter != null && !categoryFilter.isEmpty()) {
-        queryy += " WHERE category = ?";
+        queryy += " AND category = ?";
+    }
+    if (hasSearchText) {
+        queryy += " AND (Title LIKE ? OR content LIKE ? OR name LIKE ?)";
+    }
+    if (hasSearchDate) {
+        queryy += " AND DATE(date) = ?";
+    }
+    if (hasSearchYear) {
+        queryy += " AND YEAR(date) = ?";
     }
 
-    queryy += " ORDER BY date DESC"; // Order by latest news
+    queryy += " ORDER BY date DESC";
 
     try {
-        // Load JDBC driver
         Class.forName("com.mysql.cj.jdbc.Driver");
-
-        // Establish connection
         Connection conn = DriverManager.getConnection(urlll, userrr, passworddd);
-
-        // Prepare statement
         PreparedStatement stmt = conn.prepareStatement(queryy);
 
-        // Set parameters
-        stmt.setString(1, userId);
+        int paramIndex = 1;
+        stmt.setString(paramIndex++, userId);
+
         if (categoryFilter != null && !categoryFilter.isEmpty()) {
-            stmt.setString(2, categoryFilter);
+            stmt.setString(paramIndex++, categoryFilter);
+        }
+        if (hasSearchText) {
+            String searchPattern = "%" + searchText.trim() + "%";
+            stmt.setString(paramIndex++, searchPattern);
+            stmt.setString(paramIndex++, searchPattern);
+            stmt.setString(paramIndex++, searchPattern);
+        }
+        if (hasSearchDate) {
+            stmt.setString(paramIndex++, searchDate.trim());
+        }
+        if (hasSearchYear) {
+            stmt.setString(paramIndex++, searchYear.trim());
         }
 
-        // Execute query
         ResultSet rs = stmt.executeQuery();
 %>
 
@@ -355,14 +380,27 @@ inline-block
 <div class="latest-news pt-150 pb-50">
     <div class="container">
       <!-- Search Form -->
-        <form method="GET" action="" class="mb-5">
-            <div class="input-group">
-                <input type="text" name="searchText" class="form-control" placeholder="Search by text (title, author, or content)" aria-label="Search" value="<%= request.getParameter("searchText") != null ? request.getParameter("searchText") : "" %>">
-                <span class="mx-2">OR</span>
-                <input type="date" name="searchDate" class="form-control" aria-label="Date" value="<%= request.getParameter("searchDate") != null ? request.getParameter("searchDate") : "" %>">
-                <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Search</button>
-            </div>
-        </form>
+       <form method="GET" action="" class="mb-5">
+    <% if (categoryFilter != null && !categoryFilter.isEmpty()) { %>
+        <input type="hidden" name="category" value="<%= categoryFilter %>">
+    <% } %>
+    <div class="input-group">
+        <input type="text" name="searchText" class="form-control" placeholder="Search by title, author, or content" 
+               value="<%= hasSearchText ? searchText : "" %>">
+        <span class="mx-2">OR</span>
+        <input type="date" name="searchDate" class="form-control" 
+               value="<%= hasSearchDate ? searchDate : "" %>">
+        <span class="mx-2">OR</span>
+        <input type="text" name="searchYear" class="form-control" placeholder="Search by Year (e.g. 2023)" 
+               value="<%= searchYear != null ? searchYear : "" %>">
+        <button class="btn btn-outline-secondary" type="submit">Search</button>
+        <% if (hasSearchText || hasSearchDate || hasSearchYear) { %>
+            <a href="news.jsp<% if (categoryFilter != null && !categoryFilter.isEmpty()) { %>?category=<%= categoryFilter %><% } %>" 
+               class="btn btn-outline-danger">Clear Search</a>
+        <% } %>
+    </div>
+</form>
+
 
         <div class="row">
             <div class="col-lg-8 offset-lg-2 text-center">
@@ -373,59 +411,68 @@ inline-block
             </div>
         </div>
 
-        <div class="row">
-            <%
-                while (rs.next()) {
-                    String title = rs.getString("Title");
-                    String content = rs.getString("content");
-                    String author = rs.getString("name");
-                    String image = rs.getString("videos");
-                    String category = rs.getString("category");
-                    String date = rs.getString("date");
-                    int likeCount = rs.getInt("like_count");
-                    boolean liked = rs.getInt("liked") > 0;
-                    int comment_count = rs.getInt("comment_count");
-            %>
-            <div class="col-lg-4 col-md-6">
-                <div class="single-latest-news">
-                    <a href="single-news.jsp?id=<%= rs.getInt("id") %>">
-                        <img src="<%= image %>" alt="<%= title %>" class="news-image">
-                    </a>
-                    <div class="news-text-box">
-                        <h3><a href="single-news.jsp?id=<%= rs.getInt("id") %>"><%= title %></a></h3>
-                        <p class="blog-meta">
-                            <span class="author"><i class="fas fa-user"></i> <%= author %></span>
-                            <span class="date"><i class="fas fa-calendar"></i> <%= date %></span>
-                        </p>
-                        <p class="excerpt"><%= content.length() > 100 ? content.substring(0, 100) + "..." : content %></p>
-                        <div class="separator-line"></div>
-                        <div class="news-actions">
-                            <a href="#" class="action-btn like-btn" data-newsid="<%= rs.getInt("id") %>">
-                                <i class="fas fa-thumbs-up" style="color: <%= liked ? "orange" : "gray" %>"></i>
-                                <span class="like-count"><%= likeCount %></span>
-                            </a>
-                            <div class="vertical-separator"></div>
- <!-- Comment Button -->
-                <a href="single-news.jsp?id=<%= rs.getInt("id") %>" class="action-btn">
-                    <i class="fas fa-comment"></i> <span class="comment-count"><%= comment_count %></span>
-                </a>                            <div class="vertical-separator"></div>
-                            <a href="#" class="action-btn"><i class="fas fa-share"></i> Share</a>
-                            <div class="vertical-separator"></div>
-                            <a href="single-news.jsp?id=<%= rs.getInt("id") %>" class="action-btn"><i class="fas fa-book-open"></i> Read</a>
-                        </div>
+        <% if (!rs.isBeforeFirst()) { %>
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <div class="alert alert-info">
+                        No news found matching your search criteria.
                     </div>
                 </div>
             </div>
-            <%
-                }
-                rs.close();
-                stmt.close();
-                conn.close();
-            %>
-        </div>
+        <% } else { %>
+            <div class="row">
+                <%
+                    while (rs.next()) {
+                        String title = rs.getString("Title");
+                        String content = rs.getString("content");
+                        String author = rs.getString("name");
+                        String image = rs.getString("videos");
+                        String category = rs.getString("category");
+                        String date = rs.getString("date");
+                        int likeCount = rs.getInt("like_count");
+                        boolean liked = rs.getInt("liked") > 0;
+                        int comment_count = rs.getInt("comment_count");
+                %>
+                <!-- News item display code remains the same -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="single-latest-news">
+                        <a href="single-news.jsp?id=<%= rs.getInt("id") %>">
+                            <img src="<%= image %>" alt="<%= title %>" class="news-image">
+                        </a>
+                        <div class="news-text-box">
+                            <h3><a href="single-news.jsp?id=<%= rs.getInt("id") %>"><%= title %></a></h3>
+                            <p class="blog-meta">
+                                <span class="author"><i class="fas fa-user"></i> <%= author %></span>
+                                <span class="date"><i class="fas fa-calendar"></i> <%= date %></span>
+                            </p>
+                            <p class="excerpt"><%= content.length() > 100 ? content.substring(0, 100) + "..." : content %></p>
+                            <div class="separator-line"></div>
+                            <div class="news-actions">
+                                <a href="#" class="action-btn like-btn" data-newsid="<%= rs.getInt("id") %>">
+                                    <i class="fas fa-thumbs-up" style="color: <%= liked ? "orange" : "gray" %>"></i>
+                                    <span class="like-count"><%= likeCount %></span>
+                                </a>
+                                <div class="vertical-separator"></div>
+                                <a href="single-news.jsp?id=<%= rs.getInt("id") %>" class="action-btn">
+                                    <i class="fas fa-comment"></i> <span class="comment-count"><%= comment_count %></span>
+                                </a>
+                                <div class="vertical-separator"></div>
+                                <a href="#" class="action-btn"><i class="fas fa-share"></i> Share</a>
+                                <div class="vertical-separator"></div>
+                                <a href="single-news.jsp?id=<%= rs.getInt("id") %>" class="action-btn"><i class="fas fa-book-open"></i> Read</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <%
+                    }
+                %>
+            </div>
+        <% } %>
+        
         <div class="row">
             <div class="col-lg-12 text-center">
-                <a href="news.jsp" class="boxed-btn">More News</a>
+                <a href="news.jsp<% if (categoryFilter != null && !categoryFilter.isEmpty()) { %>?category=<%= categoryFilter %><% } %>" class="boxed-btn">More News</a>
             </div>
         </div>
         <br><br>
@@ -433,6 +480,9 @@ inline-block
 </div>
 
 <%
+        rs.close();
+        stmt.close();
+        conn.close();
     } catch (Exception e) {
         e.printStackTrace();
         out.println("<p class='text-danger'>Error fetching news items. Please try again later.</p>");
@@ -458,8 +508,15 @@ if (message != null) {
 				Aliquid, fuga quas itaque eveniet beatae optio.</p>
 		</div>
 	</div>
+<% if (session.getAttribute("user") == null) { %>
+    <div class="alert alert-warning">
+        You need to <a href="login.jsp">login</a> to post news.
+    </div>
+<% } %>
 
-	<div class="container pb-8">
+<!-- Then wrap your form in: -->
+<% if (session.getAttribute("user") != null) { %>
+<div class="container pb-8">
 		<div class="row justify-content-center">
 			<div class="col-md-8">
 			<form action="addnews" method="post" enctype="multipart/form-data" class="bg-white p-4 rounded shadow-sm" onsubmit="return validateForm()">
@@ -536,6 +593,8 @@ if (message != null) {
 		</div>
 	</div>
 
+<% } %>
+	
 
 
 	<!-- logo carousel -->
@@ -637,18 +696,7 @@ document.querySelectorAll(".like-btn").forEach(button => {
             .catch(error => console.error("Error:", error));
     });
 });
-// Function to check if the user is logged in
-function isUserLoggedIn() {
-    // Replace this with your actual logic to check if the user is logged in
-    // For example, you can check if a session or token exists in localStorage
-    const userLoggedIn = localStorage.getItem("userLoggedIn"); // Example
-    return userLoggedIn === "true"; // Adjust based on your logic
-}
 
-// Function to redirect to the login page
-function redirectToLogin() {
-    window.location.href = "login.jsp?message=Please login to upload images or post news.";
-}
 
 // Function to validate the form and check login status
 function validateForm() {
@@ -659,21 +707,9 @@ function validateForm() {
     return true; // Allow form submission
 }
 
-// Add event listener to the file input
-document.getElementById("news-image").addEventListener("change", function () {
-    if (!isUserLoggedIn()) {
-        redirectToLogin();
-        this.value = ""; // Clear the file input
-    }
-});
 
-// Add event listener to the form submission
-document.querySelector("form").addEventListener("submit", function (event) {
-    if (!isUserLoggedIn()) {
-        event.preventDefault(); // Prevent form submission
-        redirectToLogin();
-    }
-});
+
+
 function validateForm() {
     let isValid = true;
 

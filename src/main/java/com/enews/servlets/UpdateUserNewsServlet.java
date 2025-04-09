@@ -19,11 +19,11 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-@WebServlet("/UpdateNewsServlet")
+@WebServlet("/UpdateUserNewsServlet")
 @MultipartConfig(fileSizeThreshold = 1024 * 1024 * 2, // 2MB
                  maxFileSize = 1024 * 1024 * 10,      // 10MB
                  maxRequestSize = 1024 * 1024 * 50)   // 50MB
-public class UpdateNewsServlet extends HttpServlet {
+public class UpdateUserNewsServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     
     // Directory where uploaded files will be saved
@@ -31,7 +31,7 @@ public class UpdateNewsServlet extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
-        if (session.getAttribute("admin") == null) {
+        if (session.getAttribute("user") == null) {
             response.sendRedirect("login.jsp?message=Please login as admin to access this page.");
             return;
         }
@@ -100,13 +100,13 @@ public class UpdateNewsServlet extends HttpServlet {
             pstmt.setInt(8, Integer.parseInt(id));
             pstmt.executeUpdate();
 
-            response.sendRedirect("availablenews.jsp?message=News updated successfully.");
+            response.sendRedirect("useraddednews.jsp?message=News updated successfully.");
 
             pstmt.close();
             con.close();
         } catch (Exception e) {
             e.printStackTrace();
-            response.sendRedirect("availablenews.jsp?message=Error updating news.");
+            response.sendRedirect("useraddednews.jsp?message=Error updating news.");
         }
     }
     

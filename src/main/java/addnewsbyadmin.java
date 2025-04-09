@@ -4,6 +4,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
 import java.io.File;
 import java.io.IOException;
@@ -24,7 +25,13 @@ public class addnewsbyadmin extends HttpServlet {
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    	
+    	 HttpSession session = request.getSession(false);
+         
+         // 1. First check if user OR admin is logged in
+         if (session == null || (session.getAttribute("user") == null && session.getAttribute("admin") == null)) {
+             response.sendRedirect("login.jsp?message=Please login to post news");
+             return;
+         }
         
         	// Retrieve form data
              String title = request.getParameter("title");
@@ -64,17 +71,21 @@ public class addnewsbyadmin extends HttpServlet {
                  Connection conn = DriverManager.getConnection(url, user, pass);
 
                 
-               
-                 // Insert query
-                 String sql = "INSERT INTO news (Title, content, name, videos, category, date) VALUES (?, ?, ?, ?, ?, ?)";
+              // Get email from session - check both user and admin cases
+                 String userEmail = (String) session.getAttribute("email");
+                 
+                 // Insert news with email from session
+                 String sql = "INSERT INTO news (Title, content, name, videos, category, date, email) " +
+                              "VALUES (?, ?, ?, ?, ?, ?, ?)";
+                 
                  PreparedStatement stmt = conn.prepareStatement(sql);
                  stmt.setString(1, title);
                  stmt.setString(2, content);
                  stmt.setString(3, author);
                  stmt.setString(4, "uploads/" + imageFileName);
                  stmt.setString(5, category);
-            
                  stmt.setString(6, currentDate);
+                 stmt.setString(7, userEmail);
                 
               
 
