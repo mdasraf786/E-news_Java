@@ -7,7 +7,7 @@
 		<%@ page import="java.sql.Connection, java.sql.DriverManager, java.sql.ResultSet, java.sql.Statement" %>
 		<%  
 // Check if the user session exists
-if (session.getAttribute("user") == null) {
+if (session.getAttribute("user_id") == null) {
     response.sendRedirect("login.jsp?message=Please login to access this page.");
     return;
 } 

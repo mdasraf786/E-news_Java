@@ -24,7 +24,7 @@ public class Updatenews extends HttpServlet {
 
         String title = request.getParameter("title");
         String content = request.getParameter("content");
-        String name = request.getParameter("author");
+        String name = request.getParameter("name");
         String category = request.getParameter("category");
         Part filePart = request.getPart("image");
 

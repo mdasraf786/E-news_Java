@@ -209,7 +209,17 @@ td button {
     </div>
     <!--PreLoader Ends-->
 	
-
+<!-- Your existing head content -->
+    <script>
+        function validateForm() {
+            var id = document.querySelector('input[name="id"]').value;
+            if (!id) {
+                alert('News ID is missing!');
+                return false;
+            }
+            return true;
+        }
+    </script>
 	
 	</head>
 	<body>
@@ -308,49 +318,67 @@ td button {
 	<!-- end breadcrumb section -->
     <div class="container mt-5">
         <h1 class="text-center text-orange mb-4">Edit News</h1>
-        <form action="UpdateUserNewsServlet" method="post" enctype="multipart/form-data">
+        <form action="UpdateUserNewsServlet" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
             <input type="hidden" name="id" value="<%= request.getAttribute("id") %>">
+            
             <div class="mb-3">
                 <label for="title" class="form-label">Title</label>
-                <input type="text" class="form-control" id="title" name="title" value="<%= request.getAttribute("title") %>" required>
+                <input type="text" class="form-control" id="title" name="title" 
+                       value="<%= request.getAttribute("title") %>" required>
             </div>
+            
             <div class="mb-3">
                 <label for="name" class="form-label">Name</label>
-                <input type="text" class="form-control" id="name" name="name" value="<%= request.getAttribute("name") %>" required>
+                <input type="text" class="form-control" id="name" name="name" 
+                       value="<%= request.getAttribute("name") %>" required>
             </div>
+            
+            <div class="mb-3">
+                <label for="like_count" class="form-label">Like Count</label>
+                <input type="number" class="form-control" id="like_count" name="like_count" 
+                       value="<%= request.getAttribute("like_count") %>" required>
+            </div>
+            
             <div class="mb-3">
                 <label for="content" class="form-label">Content</label>
-                <textarea class="form-control" id="content" name="content" rows="5" required><%= request.getAttribute("content") %></textarea>
+                <textarea class="form-control" id="content" name="content" rows="5" required>
+                    <%= request.getAttribute("content") %>
+                </textarea>
             </div>
+            
             <div class="mb-3">
                 <label for="category" class="form-label">Category</label>
-                <input type="text" class="form-control" id="category" name="category" value="<%= request.getAttribute("category") %>" required>
+                <input type="text" class="form-control" id="category" name="category" 
+                       value="<%= request.getAttribute("category") %>" required>
             </div>
+            
             <div class="mb-3">
                 <label for="date" class="form-label">Date</label>
-                <input type="date" class="form-control" id="date" name="date" value="<%= request.getAttribute("date") %>" required>
+                <input type="date" class="form-control" id="date" name="date" 
+                       value="<%= request.getAttribute("date") %>" required>
             </div>
-           
+            
             <div class="mb-3">
                 <label for="image" class="form-label">Current Image</label>
                 <% String currentImage = (String) request.getAttribute("image"); %>
                 <% if (currentImage != null && !currentImage.isEmpty()) { %>
-                    <img src="<%= currentImage %>" class="preview-image d-block" id="currentImagePreview">
+                    <img src="<%= currentImage %>" class="preview-image d-block" 
+                         style="max-width: 300px; height: auto;" id="currentImagePreview">
                 <% } else { %>
-                    <p>No image currently set</p>
+                    <p>No image currently set</p>	
                 <% } %>
             </div>
+            
             <div class="mb-3">
                 <label for="image" class="form-label">Upload New Image (Leave blank to keep current)</label>
                 <input type="file" class="form-control" id="image" name="image" accept="image/*">
-                <img src="#" class="preview-image d-none" id="imagePreview">
+                <img src="#" class="preview-image d-none" style="max-width: 300px; height: auto;" id="imagePreview">
             </div>
-            <button type="submit" class="btn btn-primary mb-5">Update News</button>
-            <a href="profile.jsp" class="btn btn-primary mb-5">Cancel</a>
             
+            <button type="submit" class="btn btn-primary mb-5">Update News</button>
+            <a href="useraddednews.jsp" class="btn btn-secondary mb-5">Cancel</a>
         </form>
     </div>
-
     <script>
         // Image preview functionality
         document.getElementById('image').addEventListener('change', function(e) {

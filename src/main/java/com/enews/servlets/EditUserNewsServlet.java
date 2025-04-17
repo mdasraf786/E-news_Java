@@ -17,8 +17,11 @@ public class EditUserNewsServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-       
-    
+        HttpSession session = request.getSession();
+        if (session.getAttribute("user") == null) {
+            response.sendRedirect("login.jsp?message=Please login to access this page.");
+            return;
+        }
 
         String id = request.getParameter("id");
         if (id == null || id.isEmpty()) {
@@ -40,6 +43,7 @@ public class EditUserNewsServlet extends HttpServlet {
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
+                // Store all attributes in request
                 request.setAttribute("id", rs.getInt("id"));
                 request.setAttribute("title", rs.getString("Title"));
                 request.setAttribute("name", rs.getString("name"));
@@ -48,6 +52,9 @@ public class EditUserNewsServlet extends HttpServlet {
                 request.setAttribute("date", rs.getString("date"));
                 request.setAttribute("like_count", rs.getString("like_count"));
                 request.setAttribute("image", rs.getString("videos"));
+
+                // Also store ID in session as backup
+                session.setAttribute("edit_news_id", rs.getInt("id"));
 
                 request.getRequestDispatcher("editusernews.jsp").forward(request, response);
             } else {
@@ -59,7 +66,7 @@ public class EditUserNewsServlet extends HttpServlet {
             con.close();
         } catch (Exception e) {
             e.printStackTrace();
-            response.sendRedirect("useraddednews.jsp?message=Error fetching news details.");
+            response.sendRedirect("useraddednews.jsp?message=Error fetching news details: " + e.getMessage());
         }
     }
 }

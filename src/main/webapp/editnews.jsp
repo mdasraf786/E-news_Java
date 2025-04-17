@@ -291,6 +291,11 @@ td button {
                 <input type="text" class="form-control" id="name" name="name" value="<%= request.getAttribute("name") %>" required>
             </div>
             <div class="mb-3">
+    <label for="like_count" class="form-label">Like Count</label>
+    <input type="number" class="form-control" id="like_count" name="like_count" 
+           value="<%= request.getAttribute("like_count") %>" required>
+</div>
+            <div class="mb-3">
                 <label for="content" class="form-label">Content</label>
                 <textarea class="form-control" id="content" name="content" rows="5" required><%= request.getAttribute("content") %></textarea>
             </div>
